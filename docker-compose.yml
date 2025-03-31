@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: "aayush786/mongo"
+    container_name: "mongo"
+      # command: ["bin/bash","-c","mongoimport --db wanderlust --collection posts --file sample_posts.json --jsonArray"]
+    ports:
+      - "27017:27017"
+    networks:
+      - aayush
+    restart: always
+
+  backend:
+    image: "aayush786/backend"
+    container_name: "backend"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/aayush
+      - CORS_ORIGIN=http://192.168.56.25:5173
+      - FRONTEND_URL=http://192.168.56.25:5173
+    ports:
+      - "5000:5000"
+    networks:
+      - aayush
+    restart: always
+
+  frontend:
+    image: "aayush786/frontend"
+    container_name: "frontend"
+    environment:
+      - VITE_API_PATH=http://192.168.56.25:5000
+    ports:
+      - "5173:5173"
+    networks:
+      - aayush
+    restart: always
+
+networks:
+  aayush:
+    name: "aayush"
+    driver: bridge
