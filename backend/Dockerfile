@@ -1,19 +1,12 @@
-FROM node:22 AS builder
+FROM node:23-alpine
 
 WORKDIR /app
 
 COPY . .
 
-RUN npm i
-
-FROM node:22-slim
-
-WORKDIR /app
-
-COPY --from=builder /app .
-
-COPY .env .env
+RUN npm install 
 
 EXPOSE 5000
 
 CMD ["npm","start"]
+
