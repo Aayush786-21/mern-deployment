@@ -22,6 +22,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Debug SSH Connection
+        run: |
+          echo "Testing SSH connection..."
+          ssh -o StrictHostKeyChecking=no -vvv -i <(echo "${{ secrets.SSH_PRIVATE_KEY }}") \
+          ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }} "echo 'SSH Connection Successful'"
+          
       - name: Deploy on Server
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -29,6 +35,12 @@ jobs:
           username: ${{ secrets.DEPLOY_SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            echo "Checking SSH access inside SSH session..."
+            whoami
+            hostname
+            ls -la ~/.ssh
+            cat ~/.ssh/authorized_keys | grep "$(echo "${{ secrets.SSH_PRIVATE_KEY }}" | ssh-keygen -y -f -)"
+            echo "Proceeding with deployment..."
             cd /home/vagrant/
             docker compose down
             docker images prune -f
