@@ -28,7 +28,7 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend
 
-      - name: Build and Push Docker Image for Backend
+      - name: Build and Push Docker Image for Backend 
         run: |
           cd backend
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend .
